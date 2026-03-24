@@ -191,13 +191,11 @@ def evaluate_all_models(test_loader):
             f.write(f"Loss: {results['loss']:.4f}\n")
 
 if __name__ == "__main__":
-    # 设置工作目录
-    target_directory = " "
-    os.chdir(target_directory)
-    
+    current_directory = os.getcwd()
+
     # 加载测试集
     print("Loading test dataset...")
-    _, test_paths, _, test_labels = load_dataset_files()
+    _, test_paths, _, test_labels = load_dataset_files("ICKAN_Dataset")
     test_dataset = AudioDataset_MFCC(test_paths, test_labels, n_mels=64, max_length=431)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
     
