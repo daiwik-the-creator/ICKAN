@@ -57,6 +57,7 @@ class AudioDataset_MFCC(Dataset):
         self.labels = labels
         self.sample_rate = sample_rate
         self.n_mels = n_mels
+        self.n_mfcc = n_mels
         self.n_fft = n_fft
         self.hop_length = hop_length
         self.max_length = max_length
