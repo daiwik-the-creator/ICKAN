@@ -326,16 +326,12 @@ def load_dataset_files(root_dir=" "):
 
 
 if __name__ == '__main__':
-    # 目标目录路径
-    target_directory = "/root/autodl-tmp/Convolutional-KANs-master"
-    os.chdir(target_directory)
-
     # 验证当前工作目录
     current_directory = os.getcwd()
     print(f"当前工作目录: {current_directory}")
 
     # 定义数据集根目录
-    train_paths, test_paths, train_labels, test_labels = load_dataset_files(" ")
+    train_paths, test_paths, train_labels, test_labels = load_dataset_files("ICKAN_Dataset")
 
     # 创建训练集和测试集的数据集对象
     train_dataset = AudioDataset_MFCC(train_paths, train_labels, n_mels=64, max_length=431)
