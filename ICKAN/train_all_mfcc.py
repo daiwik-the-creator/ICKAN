@@ -91,7 +91,7 @@ class AudioDataset_MFCC(Dataset):
             mfcc = mfcc[:, :self.max_length]
 
         # 转换为张量，确保它是 3D 张量 [channels, height, width]
-        mfcc_tensor = torch.tensor(mfcc).unsqueeze(0).float()  # 添加通道维度，成为 [1, 64, 431]
+        mfcc_tensor = torch.from_numpy(np.array(mfcc, dtype=np.float32)).unsqueeze(0)  # 添加通道维度，成为 [1, 64, 431]
 
         if self.transform:
             mfcc_tensor = self.transform(mfcc_tensor)
@@ -120,7 +120,7 @@ class AudioDataset_MFCC(Dataset):
             mfcc = mfcc[:, :self.max_length]
 
         # 转换为张量，确保它是 3D 张量 [channels, height, width]
-        mfcc_tensor = torch.tensor(mfcc).unsqueeze(0).float()  # 添加通道维度，成为 [1, 64, 431]
+        mfcc_tensor = torch.from_numpy(np.array(mfcc, dtype=np.float32)).unsqueeze(0)  # 添加通道维度，成为 [1, 64, 431]
 
         if self.transform:
             mfcc_tensor = self.transform(mfcc_tensor)
