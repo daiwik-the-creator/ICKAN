@@ -67,36 +67,42 @@ class AudioDataset_MFCC(Dataset):
         return len(self.file_paths)
 
     def __getitem__(self, idx):
-        file_path = self.file_paths[idx]
-        label = self.labels[idx]
+        try:
+            file_path = self.file_paths[idx]
+            label = self.labels[idx]
 
-        # 加载音频文件
-        waveform, sr = librosa.load(file_path, sr=self.sample_rate)
+            # 加载音频文件
+            waveform, sr = librosa.load(file_path, sr=self.sample_rate)
 
-        # 提取MFCC特征
-        mfcc = librosa.feature.mfcc(
-            y=waveform,
-            sr=self.sample_rate,
-            n_mfcc=self.n_mfcc,  # 生成64个MFCC系数
-            n_fft=self.n_fft,
-            hop_length=self.hop_length
-        )
-        mfcc = (mfcc - mfcc.mean()) / mfcc.std()  # 归一化处理
+            # 提取MFCC特征
+            mfcc = librosa.feature.mfcc(
+                y=waveform,
+                sr=self.sample_rate,
+                n_mfcc=self.n_mfcc,  # 生成64个MFCC系数
+                n_fft=self.n_fft,
+                hop_length=self.hop_length
+            )
+            mfcc = (mfcc - mfcc.mean()) / mfcc.std()  # 归一化处理
 
-        # 填充或裁剪到固定长度
-        if mfcc.shape[1] < self.max_length:
-            pad_width = self.max_length - mfcc.shape[1]
-            mfcc = np.pad(mfcc, ((0, 0), (0, pad_width)), mode='constant')
-        else:
-            mfcc = mfcc[:, :self.max_length]
+            # 填充或裁剪到固定长度
+            if mfcc.shape[1] < self.max_length:
+                pad_width = self.max_length - mfcc.shape[1]
+                mfcc = np.pad(mfcc, ((0, 0), (0, pad_width)), mode='constant')
+            else:
+                mfcc = mfcc[:, :self.max_length]
 
-        # 转换为张量，确保它是 3D 张量 [channels, height, width]
-        mfcc_tensor = torch.from_numpy(np.array(mfcc, dtype=np.float32)).unsqueeze(0)  # 添加通道维度，成为 [1, 64, 431]
+            # 转换为张量，确保它是 3D 张量 [channels, height, width]
+            mfcc_tensor = torch.from_numpy(np.array(mfcc, dtype=np.float32)).unsqueeze(0)  # 添加通道维度，成为 [1, 64, 431]
 
-        if self.transform:
-            mfcc_tensor = self.transform(mfcc_tensor)
+            if self.transform:
+                mfcc_tensor = self.transform(mfcc_tensor)
 
-        return mfcc_tensor, label
+            return mfcc_tensor, label
+            
+        except Exception as e:
+            # print(f"Warning: Corrupted file skipped: {self.file_paths[idx]} - {e}")
+            # If a file is corrupted, pick a random other index or simply the next index
+            return self.__getitem__((idx + 1) % len(self.file_paths))
 
     def mels(self, file_path):
         # 加载音频文件
